@@ -16,6 +16,20 @@ spec:
             name: auth-service
             port:
               number: 4001
+      - path: /api/inventory(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: inventory-service
+            port:
+              number: 4002
+      - path: /api/orders(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: orders-service
+            port:
+              number: 4003
       - path: /?(.*)
         pathType: ImplementationSpecific
         backend:
