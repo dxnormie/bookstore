@@ -1,0 +1,98 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: bookstore-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "bookstore.local"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: bookstore-vs
+spec:
+  hosts:
+  - "bookstore.local"
+  gateways:
+  - bookstore-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /api/auth
+    rewrite:
+      uri: /
+    timeout: 10s
+    retries:
+      attempts: 3
+      perTryTimeout: 3s
+      retryOn: gateway-error,connect-failure,retriable-4xx
+    route:
+    - destination:
+        host: auth-service
+        port:
+          number: 4001
+  - match:
+    - uri:
+        prefix: /api/inventory
+    rewrite:
+      uri: /
+    timeout: 10s
+    retries:
+      attempts: 3
+      perTryTimeout: 3s
+      retryOn: gateway-error,connect-failure,retriable-4xx
+    route:
+    - destination:
+        host: inventory-service
+        port:
+          number: 4002
+  - match:
+    - uri:
+        prefix: /api/orders
+    rewrite:
+      uri: /
+    timeout: 10s
+    retries:
+      attempts: 3
+      perTryTimeout: 3s
+      retryOn: gateway-error,connect-failure,retriable-4xx
+    route:
+    - destination:
+        host: orders-service
+        port:
+          number: 4003
+  - match:
+    - uri:
+        prefix: /
+    timeout: 15s
+    route:
+    - destination:
+        host: frontend
+        port:
+          number: 3000
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: bookstore-circuit-breaker
+spec:
+  host: "*.default.svc.cluster.local"
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: 100
+      http:
+        http1MaxPendingRequests: 50
+        maxRequestsPerConnection: 10
+    outlierDetection:
+      consecutive5xxErrors: 5
+      interval: 10s
+      baseEjectionTime: 30s
+      maxEjectionPercent: 50
