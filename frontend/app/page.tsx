@@ -1,52 +1,32 @@
-'use client';
-import { useState } from 'react';
-
 export default function Home() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await res.json();
-    setMessage(data.message || JSON.stringify(data));
-  };
-
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-96">
-        <h1 className="text-2xl font-bold mb-6 text-center">📚 Bookstore</h1>
-        <form onSubmit={handleLogin} className="space-y-4">
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            className="w-full border p-2 rounded"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            className="w-full border p-2 rounded"
-          />
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
-          >
-            Login
-          </button>
-        </form>
-        {message && (
-          <p className="mt-4 text-center text-green-600">{message}</p>
-        )}
-      </div>
+    <main>
+      {/* Hero */}
+      <section className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-20 px-6 text-center">
+        <h1 className="text-5xl font-bold mb-4">Find Your Next Book</h1>
+        <p className="text-xl mb-8 opacity-90">Discover thousands of books across all genres</p>
+        <a
+          href="/books"
+          className="bg-white text-blue-600 font-semibold px-8 py-3 rounded-full hover:bg-gray-100 transition"
+        >
+          Browse Books
+        </a>
+      </section>
+
+      {/* Features */}
+      <section className="max-w-5xl mx-auto py-16 px-6 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+        {[
+          { icon: '📖', title: 'Wide Selection', desc: 'Thousands of titles across all genres' },
+          { icon: '🚀', title: 'Fast Delivery', desc: 'Get your books delivered quickly' },
+          { icon: '🔒', title: 'Secure', desc: 'Safe and secure checkout' },
+        ].map((f) => (
+          <div key={f.title} className="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+            <div className="text-4xl mb-4">{f.icon}</div>
+            <h3 className="text-lg font-semibold mb-2">{f.title}</h3>
+            <p className="text-gray-500 text-sm">{f.desc}</p>
+          </div>
+        ))}
+      </section>
     </main>
   );
 }
