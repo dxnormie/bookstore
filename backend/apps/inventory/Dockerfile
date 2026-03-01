@@ -9,7 +9,7 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN npm install --omit=dev
 COPY --from=builder /app/dist/apps/inventory ./dist/apps/inventory
 EXPOSE 4002
 CMD ["node", "dist/apps/inventory/main"]
