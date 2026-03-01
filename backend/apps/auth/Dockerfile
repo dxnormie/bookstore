@@ -12,7 +12,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 COPY package*.json ./
-RUN npm install --omit=dev
+RUN npm install --omit=dev --legacy-peer-deps 
 COPY --from=builder /app/dist/apps/auth ./dist/apps/auth
 
 EXPOSE 4001
