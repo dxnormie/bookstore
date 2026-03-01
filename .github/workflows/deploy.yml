@@ -21,30 +21,26 @@ jobs:
       - name: Build & Push auth-service
         uses: docker/build-push-action@v5
         with:
-          context: ./backend/apps/auth
+          context: ./backend          # ← root of monorepo
+          file: ./backend/apps/auth/Dockerfile   # ← specific Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/auth-service:latest
 
       - name: Build & Push inventory-service
         uses: docker/build-push-action@v5
         with:
-          context: ./backend/apps/inventory
+          context: ./backend
+          file: ./backend/apps/inventory/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/inventory-service:latest
 
       - name: Build & Push orders-service
         uses: docker/build-push-action@v5
         with:
-          context: ./backend/apps/orders
+          context: ./backend
+          file: ./backend/apps/orders/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/orders-service:latest
-
-      - name: Build & Push backend
-        uses: docker/build-push-action@v5
-        with:
-          context: ./backend/apps/backend
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/backend:latest
 
       - name: Build & Push frontend
         uses: docker/build-push-action@v5
